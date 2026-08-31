@@ -1,0 +1,28 @@
+services:
+  ads-render-service:
+    build: .
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - RENDER_API_KEY=${RENDER_API_KEY}
+    expose:
+      - "3000"
+    labels:
+      # Standard Traefik labels for routing a subdomain to this container.
+      # ADJUST THE HOST RULE to whatever this panel's convention actually
+      # is — check how the n8n or baserow compose files on this VPS
+      # already label themselves (the panel's "Documentation" link for
+      # this app, or an existing app's compose file, will show the exact
+      # network name and entrypoint this instance uses) and match that
+      # pattern rather than trusting this verbatim.
+      - "traefik.enable=true"
+      - "traefik.http.routers.ads-render.rule=Host(`render.scaleyourresults.cloud`)"
+      - "traefik.http.routers.ads-render.entrypoints=websecure"
+      - "traefik.http.routers.ads-render.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ads-render.loadbalancer.server.port=3000"
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true

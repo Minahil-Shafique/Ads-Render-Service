@@ -1,0 +1,92 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Display';src:url('__ANTON__') format('truetype');}
+  @font-face{font-family:'Body';src:url('__INTER__') format('truetype');font-weight:100 900;}
+  :root{
+    --ink:#16181D; --cream:#F5F1EA; --accent:#C9992F; --white:#fff; --rule:#E2E5E9;
+    --strip: __STRIPPX__;                  /* 0px when unbranded */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1024px;height:1024px;overflow:hidden}
+  .canvas{position:relative;width:1024px;height:1024px;background:var(--cream);font-family:'Body',sans-serif;}
+  .art{position:absolute;left:0;right:0;top:0;height:calc(100% - var(--strip));overflow:hidden}
+  img.plate{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* ---------- shared type ---------- */
+  .eyebrow{font-weight:700;font-size:26px;letter-spacing:4.5px;text-transform:uppercase;color:var(--accent)}
+  .eyebrow.dark{color:var(--ink)}
+  .headline{font-family:'Display';text-transform:uppercase;line-height:.88;letter-spacing:-1px}
+  .sub{font-weight:500;font-size:30px;line-height:1.3}
+  .btn{display:inline-block;background:var(--accent);color:var(--ink);font-weight:800;
+       font-size:28px;padding:18px 34px}
+  .link{font-weight:800;font-size:27px;color:var(--accent);border-bottom:3px solid var(--accent);
+        display:inline-block;padding-bottom:5px}
+
+  /* ---------- feature row (NEW: not in original starter kit) ---------- */
+  /* Text-only row, no icon glyphs shipped in the starter kit's assets.
+     Matches the layout of "price banner with a three icon feature row"
+     reference, minus the icon artwork itself. */
+  .features{position:absolute;left:0;right:0;bottom:var(--strip);display:flex;
+            background:var(--white);border-top:2px solid var(--rule)}
+  .features .feat{flex:1;text-align:center;padding:18px 8px;font-weight:700;
+                   font-size:20px;letter-spacing:1px;color:var(--ink);
+                   border-right:1px solid var(--rule)}
+  .features .feat:last-child{border-right:none}
+
+  /* ---------- A: price banner ---------- */
+  .A .panel{position:absolute;top:0;left:0;right:0;height:30%;background:var(--cream);
+            display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 44px;text-align:center}
+  .A .photo{position:absolute;top:30%;left:0;right:0;bottom:0;overflow:hidden}
+  .A .photo img{width:100%;height:100%;object-fit:cover}
+  .A .headline{color:var(--ink);font-size:150px;width:100%}
+  .A .eyebrow{margin-bottom:14px}
+  .A.has-features .photo{bottom:78px}
+  .A.has-features .features{bottom:var(--strip)}
+
+  /* ---------- B: split panel ---------- */
+  .B .left{position:absolute;top:0;bottom:0;left:0;width:45%;background:var(--ink);
+           display:flex;flex-direction:column;justify-content:center;padding:0 46px;gap:20px}
+  .B .right{position:absolute;top:0;bottom:0;left:45%;right:0;overflow:hidden}
+  .B .right img{width:100%;height:100%;object-fit:cover}
+  .B .headline{font-size:86px;color:var(--white)}
+  .B .headline .hl{color:var(--accent);display:block}
+  .B .sub{color:var(--white);font-size:26px;opacity:.95}
+
+  /* ---------- C: full bleed ---------- */
+  .C .stack{position:absolute;top:6%;left:0;right:0;padding:0 52px;text-align:left}
+  .C .headline{font-size:132px}
+  .C.day .headline{color:var(--ink)} .C.day .sub{color:var(--ink)}
+  .C.night .headline{color:var(--white)} .C.night .sub{color:var(--white)}
+  .C .headline .hl{color:var(--accent);display:block}
+  .C .footlink{position:absolute;left:52px;bottom:calc(var(--strip) + 40px)}
+
+  /* ---------- branding strip ---------- */
+  .strip{position:absolute;left:0;right:0;bottom:0;height:var(--strip);background:var(--white);
+         border-top:2px solid var(--rule);display:flex;align-items:center;justify-content:space-between;
+         padding:0 calc(var(--strip) * 0.30)}
+  .strip img{height:40%;width:auto;display:block}
+  .strip .who{text-align:right;line-height:1.15}
+  .strip .nm{font-weight:800;font-size:calc(var(--strip) * 0.27);color:var(--ink)}
+  .strip .bk{font-weight:400;font-size:calc(var(--strip) * 0.21);color:#616B7A}
+</style></head>
+<body>
+<div class="canvas __LAYOUT__ __MOOD__ __FEATCLASS__" id="canvas">__BODY__</div>
+
+<script>
+/* shrink-to-fit: the thing GraphicsMagick cannot do.
+   Headlines vary from "FROM $575K" to "THE SUITE HELPS PAY THE MORTGAGE".
+   Step the font size down until the text fits its box. */
+(function(){
+  document.querySelectorAll('.headline').forEach(function(el){
+    var box = el.parentElement;
+    var size = parseFloat(getComputedStyle(el).fontSize);
+    var guard = 0;
+    while ((el.scrollWidth > box.clientWidth - 4 || el.scrollHeight > box.clientHeight - 4) && size > 24 && guard < 400){
+      size -= 2; el.style.fontSize = size + 'px'; guard++;
+    }
+    el.setAttribute('data-final-size', Math.round(size));
+  });
+  window.__READY__ = true;
+})();
+</script>
+</body></html>

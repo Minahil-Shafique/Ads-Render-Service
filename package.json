@@ -1,0 +1,14 @@
+{
+  "name": "ads-engine-v2-render-service",
+  "version": "0.1.0",
+  "description": "Phase 1 compositor for Ads Engine v2 — POST /render, per build spec section 4",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2",
+    "puppeteer": "^24.15.0",
+    "sharp": "^0.33.5"
+  }
+}
