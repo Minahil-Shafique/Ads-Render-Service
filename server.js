@@ -83,7 +83,7 @@ async function fetchBuffer(url) {
  * no branding requested — caller skips this function entirely then).
  */
 async function detectOrCarveStripFraction(plateBuffer) {
-  const img = sharp(plateBuffer).ensureAlpha(false);
+  const img = sharp(plateBuffer).removeAlpha();
   const meta = await img.metadata();
   const width = meta.width;
   const height = meta.height;
