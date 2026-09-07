@@ -229,9 +229,24 @@ app.post('/render', async (req, res) => {
     let stripPx = 0;
     let logoDataUri = '';
     if (brand) {
+      // FIX (2026-09): this used to also call paintStripWhite() to bake a
+      // white band directly into the plate's own pixels at this same
+      // fraction. That was redundant and actively harmful -- template.html's
+      // CSS already reserves this exact space independently via
+      // `.art{ height: calc(100% - var(--strip)) }`, so the photo's
+      // container is already shrunk to make room for the .strip div below
+      // it. Painting a matching white band into the photo ITSELF meant that
+      // fraction got double-counted: one copy still visible inside the
+      // (now-shrunk) photo box, plus the full separate .strip div below it.
+      // That's what produced the oversized blank gap on branded creatives,
+      // and it's also why the CTA link's position (calculated purely from
+      // --strip, which has no knowledge of the extra painted band) could
+      // land right at that invisible internal seam instead of cleanly over
+      // real photo content. Detection still runs -- stripFraction is still
+      // needed to size --strip correctly -- the physical painting step is
+      // just gone.
       const stripFraction = await detectOrCarveStripFraction(plateBuffer);
       stripPx = Math.round(stripFraction * CANVAS);
-      plateBuffer = await paintStripWhite(plateBuffer, Math.round(stripFraction * meta.height), meta.width, meta.height);
 
       const logoBuffer = await fetchBuffer(brand.logoUrl);
       const trimmedLogo = await trimLogo(logoBuffer);
