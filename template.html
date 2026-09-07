@@ -10,7 +10,16 @@
   html,body{width:1024px;height:1024px;overflow:hidden}
   .canvas{position:relative;width:1024px;height:1024px;background:var(--cream);font-family:'Body',sans-serif;}
   .art{position:absolute;left:0;right:0;top:0;height:calc(100% - var(--strip));overflow:hidden}
-  img.plate{width:100%;height:100%;object-fit:cover;display:block}
+  /* FIX (2026-09): added object-position so any object-fit:cover crop
+     (needed once --strip shrinks this box below the plate's native square
+     aspect ratio) removes pixels from the BOTTOM only. Previously defaulted
+     to centered (50% 50%) cropping, which trimmed equally from top and
+     bottom -- risking a bite out of the top margin the image prompts
+     deliberately reserve (clean sky for full_bleed, the text-panel zone for
+     price_banner). The bottom is the correct place to lose pixels: it's the
+     same margin the prompts already ask Gemini to keep clean/simple when
+     branding is on. */
+  img.plate{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 
   /* ---------- shared type ---------- */
   .eyebrow{font-weight:700;font-size:26px;letter-spacing:4.5px;text-transform:uppercase;color:var(--accent)}
@@ -37,7 +46,10 @@
   .A .panel{position:absolute;top:0;left:0;right:0;height:30%;background:var(--cream);
             display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 44px;text-align:center}
   .A .photo{position:absolute;top:30%;left:0;right:0;bottom:0;overflow:hidden}
-  .A .photo img{width:100%;height:100%;object-fit:cover}
+  /* FIX (2026-09): same object-position fix as img.plate above, applied
+     here too -- this is the third of three img rules affected by the
+     top/bottom crop issue. */
+  .A .photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
   .A .headline{color:var(--ink);font-size:150px;width:100%}
   .A .eyebrow{margin-bottom:14px}
   .A.has-features .photo{bottom:78px}
@@ -47,7 +59,8 @@
   .B .left{position:absolute;top:0;bottom:0;left:0;width:45%;background:var(--ink);
            display:flex;flex-direction:column;justify-content:center;padding:0 46px;gap:20px}
   .B .right{position:absolute;top:0;bottom:0;left:45%;right:0;overflow:hidden}
-  .B .right img{width:100%;height:100%;object-fit:cover}
+  /* FIX (2026-09): same object-position fix as img.plate above. */
+  .B .right img{width:100%;height:100%;object-fit:cover;object-position:center top}
   .B .headline{font-size:86px;color:var(--white)}
   .B .headline .hl{color:var(--accent);display:block}
   .B .sub{color:var(--white);font-size:26px;opacity:.95}
