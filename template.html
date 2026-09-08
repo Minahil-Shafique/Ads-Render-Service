@@ -46,20 +46,16 @@
   .A .panel{position:absolute;top:0;left:0;right:0;height:30%;background:var(--cream);
             display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 44px;text-align:center}
   .A .photo{position:absolute;top:30%;left:0;right:0;bottom:0;overflow:hidden}
-  /* FIX (2026-09, corrected): unlike img.plate (Layout C) and .right img
-     (Layout B), this box does NOT start at the canvas top -- .A .photo
-     starts at top:30% and runs to the bottom, so it's the LOWER portion
-     of the canvas, not the upper. Anchoring the crop to the top of the
-     SOURCE plate (as first shipped) kept the plate's sky/upper region --
-     exactly where price_banner's prompt puts almost no house, since the
-     house is told to stay in the middle band, away from the top (that's
-     where the text panel goes). The house ended up cropped out entirely,
-     leaving mostly sky with a sliver of roofline at the crop boundary.
-     Anchoring to the BOTTOM of the source plate instead keeps the middle
-     and lower portion of the plate -- where the house and driveway
-     actually are -- and crops away the plate's own top margin instead,
-     which is the correct trade for this layout. */
-  .A .photo img{width:100%;height:100%;object-fit:cover;object-position:center bottom}
+  /* FIX (2026-09, round 2): full bottom-anchoring (100%) over-corrected --
+     it assumes ALL the excess height is safe-to-lose road/foreground, but
+     when the roofline sits close to where the top-30% reservation ends,
+     cropping that aggressively from the top clips into the roof itself.
+     70% biases the crop toward the bottom (where the road actually is)
+     while leaving real margin at the top so the roof isn't sitting right
+     at the crop edge. This is a bias, not a guarantee -- house position
+     still varies per generated plate, so re-check this against new plates
+     rather than assuming it's perfect for every one. */
+  .A .photo img{width:100%;height:100%;object-fit:cover;object-position:center 70%}
   .A .headline{color:var(--ink);font-size:150px;width:100%}
   .A .eyebrow{margin-bottom:14px}
   .A.has-features .photo{bottom:78px}
@@ -104,7 +100,10 @@
     var box = el.parentElement;
     var size = parseFloat(getComputedStyle(el).fontSize);
     var guard = 0;
-    while ((el.scrollWidth > box.clientWidth - 4 || el.scrollHeight > box.clientHeight - 4) && size > 24 && guard < 400){
+    // FIX (2026-09): tolerance was -4px, tight enough that a comma's
+    // descender on a large price headline could sit right at (or just
+    // past) the panel's edge. Widened to -14px for real headroom.
+    while ((el.scrollWidth > box.clientWidth - 14 || el.scrollHeight > box.clientHeight - 14) && size > 24 && guard < 400){
       size -= 2; el.style.fontSize = size + 'px'; guard++;
     }
     el.setAttribute('data-final-size', Math.round(size));
