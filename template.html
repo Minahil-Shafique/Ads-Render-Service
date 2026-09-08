@@ -46,10 +46,20 @@
   .A .panel{position:absolute;top:0;left:0;right:0;height:30%;background:var(--cream);
             display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 44px;text-align:center}
   .A .photo{position:absolute;top:30%;left:0;right:0;bottom:0;overflow:hidden}
-  /* FIX (2026-09): same object-position fix as img.plate above, applied
-     here too -- this is the third of three img rules affected by the
-     top/bottom crop issue. */
-  .A .photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+  /* FIX (2026-09, corrected): unlike img.plate (Layout C) and .right img
+     (Layout B), this box does NOT start at the canvas top -- .A .photo
+     starts at top:30% and runs to the bottom, so it's the LOWER portion
+     of the canvas, not the upper. Anchoring the crop to the top of the
+     SOURCE plate (as first shipped) kept the plate's sky/upper region --
+     exactly where price_banner's prompt puts almost no house, since the
+     house is told to stay in the middle band, away from the top (that's
+     where the text panel goes). The house ended up cropped out entirely,
+     leaving mostly sky with a sliver of roofline at the crop boundary.
+     Anchoring to the BOTTOM of the source plate instead keeps the middle
+     and lower portion of the plate -- where the house and driveway
+     actually are -- and crops away the plate's own top margin instead,
+     which is the correct trade for this layout. */
+  .A .photo img{width:100%;height:100%;object-fit:cover;object-position:center bottom}
   .A .headline{color:var(--ink);font-size:150px;width:100%}
   .A .eyebrow{margin-bottom:14px}
   .A.has-features .photo{bottom:78px}
