@@ -108,8 +108,17 @@
     // past BOTH the top and bottom edges -- clipping the eyebrow at the
     // canvas top and dropping the headline's last line onto the photo.
     // Now subtracts the eyebrow's actual rendered height from the budget
-    // the headline is allowed to fit into.
-    var eyebrowEl = box.querySelector('.eyebrow');
+    // the headline is allowed to fit into -- but ONLY for .panel (Layout A),
+    // which has a genuinely FIXED height (30% of canvas, set in CSS,
+    // independent of content). Layout C's .stack sets top:6% with no
+    // bottom, so its height auto-grows to fit its own content -- applying
+    // this same subtraction there made box.clientHeight a moving target
+    // that shrank in lockstep with the headline being measured against it,
+    // collapsing the headline to the 24px floor every time. Layout B's
+    // .left is fixed-height too (top:0;bottom:0) but was never actually
+    // broken by this, so it's left alone rather than touched speculatively.
+    var isFixedHeightPanel = box.classList.contains('panel');
+    var eyebrowEl = isFixedHeightPanel ? box.querySelector('.eyebrow') : null;
     var eyebrowHeight = eyebrowEl ? eyebrowEl.offsetHeight : 0;
     var size = parseFloat(getComputedStyle(el).fontSize);
     var guard = 0;
