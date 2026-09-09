@@ -98,12 +98,22 @@
 (function(){
   document.querySelectorAll('.headline').forEach(function(el){
     var box = el.parentElement;
+    // FIX (2026-09, round 2): this only ever measured the HEADLINE's own
+    // height against the panel -- it had no idea an eyebrow sharing the
+    // same box was also taking up real space. Invisible as long as every
+    // eyebrow was a single short line (as in the reference set), but once
+    // a longer eyebrow wraps to two lines, eyebrow+headline together can
+    // exceed the panel's fixed height, and with no overflow:hidden on
+    // .panel, flexbox's justify-content:center bleeds the overflow evenly
+    // past BOTH the top and bottom edges -- clipping the eyebrow at the
+    // canvas top and dropping the headline's last line onto the photo.
+    // Now subtracts the eyebrow's actual rendered height from the budget
+    // the headline is allowed to fit into.
+    var eyebrowEl = box.querySelector('.eyebrow');
+    var eyebrowHeight = eyebrowEl ? eyebrowEl.offsetHeight : 0;
     var size = parseFloat(getComputedStyle(el).fontSize);
     var guard = 0;
-    // FIX (2026-09): tolerance was -4px, tight enough that a comma's
-    // descender on a large price headline could sit right at (or just
-    // past) the panel's edge. Widened to -14px for real headroom.
-    while ((el.scrollWidth > box.clientWidth - 14 || el.scrollHeight > box.clientHeight - 14) && size > 24 && guard < 400){
+    while ((el.scrollWidth > box.clientWidth - 14 || (eyebrowHeight + el.scrollHeight) > box.clientHeight - 14) && size > 24 && guard < 400){
       size -= 2; el.style.fontSize = size + 'px'; guard++;
     }
     el.setAttribute('data-final-size', Math.round(size));
